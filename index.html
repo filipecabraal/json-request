@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+</head>
+<body>
+	<div class="container mt-5">
+		<div class="row">
+			<div class="col-md-4"></div>
+			<div class="col-md-4 text-center">
+				<form action="">
+					<div class="input-group mb-3">
+					  <div class="input-group-prepend">
+					    <span class="input-group-text">Type it ID</span>
+					  </div>
+					  <input type="text" class="form-control">
+					  <input type="checkbox" class="form-control checkbox">
+					</div>
+					<button class="btn btn-primary search">Search</button>
+					<button class="btn btn-danger clear">Clear</button>
+				</form>
+
+				<div class="loader loader--style3 mt-3" style="display: none;" title="2">
+				  <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+				     width="40px" height="40px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+				  <path fill="#ccc" d="M43.935,25.145c0-10.318-8.364-18.683-18.683-18.683c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615c8.072,0,14.615,6.543,14.615,14.615H43.935z">
+				    <animateTransform attributeType="xml"
+				      attributeName="transform"
+				      type="rotate"
+				      from="0 25 25"
+				      to="360 25 25"
+				      dur="0.6s"
+				      repeatCount="indefinite"/>
+				    </path>
+				  </svg>
+				</div>
+
+				<div class="alert alert-danger alert-dismissible mt-3" style="display: none">
+					<button type="button" class="close" aria-label="Close">&times;</button>
+				  	<strong>WARNING!</strong> This ID is not exist 
+				</div>				
+
+				<div class="alert alert-warning alert-dismissible mt-3" style="display: none;">
+					<button type="button" class="close" aria-label="Close">&times;</button>
+				  	<strong>Enter one value!</strong>  
+				</div>
+			</div>
+			<div class="col-md-4"></div>
+		</div>
+
+		<div class="content mt-5"></div>
+	</div>		
+</body>
+</html>
+
+<script>
+	$(function(){
+		var api = 'https://jsonplaceholder.typicode.com/posts/';
+
+
+		$('.search').on('click', function(e){
+			e.preventDefault();
+
+			var number = $('.form-control').val();
+
+			$('.alert').fadeOut();
+			$('.content').empty();
+
+			$('.loader').show();
+
+			if(number == "") {
+				$('.alert-warning').fadeIn('slow');
+				$('.loader').hide();
+			} else {
+				$.ajax({
+					method: "GET",
+					url: api+number,
+					dataType: "json",
+					success: function(res){
+
+						if('title' in res) {
+							$('.content').append(
+								'<h1> <b>' + res.title + '</b></h1>' +
+								'<p>' + res.body + '</p>' +
+								'<p>User ID: ' + res.userId + '</p>'
+							);
+						} else {
+							$('.alert-danger').fadeIn('slow');
+						}
+					},
+
+					error: function() {
+						$('.alert-danger').fadeIn('slow');
+					},
+
+					complete: function() {
+						$('.loader').hide();
+					}
+				});		
+			}
+		});
+
+		$('.clear').on('click', function(e){
+			e.preventDefault();
+			
+			$('.content').empty();		
+			$('.form-control').val('');
+			$('.form-control').focus();
+			$('.alert').fadeOut();		
+		});
+
+		$('.close').on('click', function(){
+			$('.form-control').val('');
+			$('.form-control').focus();
+			$('.alert').fadeOut();	
+		});	
+	});
+
+	// for(var i = 0; i < res.length; i++) {
+	// 	if (res[i].id == number) {
+	// 		$('.content').append(
+	// 			'<h1> <b>' + res[i].title + '</b></h1>' +
+	// 			'<p>' + res[i].body + '</p>'
+	// 		);
+	// 		find = true;
+	// 		break;
+	// 	}
+	// }
+</script>
+
